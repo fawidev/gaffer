@@ -455,6 +455,12 @@ const REVENUE = [
 function GafferPitch() {
   const [activeMode, setActiveMode] = useState(0);
   const [activeTab, setActiveTab] = useState("overview");
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 640);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
   const mode = MODES[activeMode];
   const FanComp = mode.fan;
   const SceneComp = mode.scene;
@@ -463,15 +469,17 @@ function GafferPitch() {
     <div style={{ background: "#F8FAFC", minHeight: "100vh", fontFamily: "'Inter', -apple-system, sans-serif", color: "#111827" }}>
 
       {/* ── TOP NAV ── */}
-      <div style={{ background: "white", borderBottom: "1.5px solid #E5E7EB", padding: "0 24px", position: "sticky", top: 0, zIndex: 100, display: "flex", alignItems: "center", gap: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 0", marginRight: "auto" }}>
+      <div style={{ background: "white", borderBottom: "1.5px solid #E5E7EB", padding: isMobile ? "0 14px" : "0 24px", position: "sticky", top: 0, zIndex: 100, display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: isMobile ? "stretch" : "center", gap: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: isMobile ? "12px 0 6px" : "14px 0", marginRight: isMobile ? 0 : "auto" }}>
           <span style={{ fontSize: 24 }}>⚽</span>
           <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: -0.5 }}>The <span style={{ color: "#2563EB" }}>Gaffer</span></span>
           <span style={{ background: "#EFF6FF", color: "#2563EB", fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "2px 8px", letterSpacing: 1, textTransform: "uppercase" }}>Pitch 2026</span>
         </div>
-        {["overview","modes","revenue","funding"].map(t => (
-          <button key={t} onClick={() => setActiveTab(t)} style={{ background: "none", border: "none", padding: "18px 16px", fontSize: 13, fontWeight: activeTab === t ? 700 : 500, color: activeTab === t ? "#2563EB" : "#6B7280", borderBottom: `2px solid ${activeTab === t ? "#2563EB" : "transparent"}`, cursor: "pointer", textTransform: "capitalize", letterSpacing: 0.3 }}>{t}</button>
-        ))}
+        <div style={{ display: "flex", overflowX: "auto", justifyContent: isMobile ? "space-between" : "flex-start" }}>
+          {["overview","modes","revenue","funding"].map(t => (
+            <button key={t} onClick={() => setActiveTab(t)} style={{ background: "none", border: "none", padding: isMobile ? "12px 8px" : "18px 16px", fontSize: isMobile ? 12 : 13, fontWeight: activeTab === t ? 700 : 500, color: activeTab === t ? "#2563EB" : "#6B7280", borderBottom: `2px solid ${activeTab === t ? "#2563EB" : "transparent"}`, cursor: "pointer", textTransform: "capitalize", letterSpacing: 0.3, whiteSpace: "nowrap", flex: isMobile ? 1 : "none" }}>{t}</button>
+          ))}
+        </div>
       </div>
 
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 20px 60px" }}>
@@ -598,8 +606,8 @@ function GafferPitch() {
           </div>
 
           {/* ACTIVE MODE */}
-          <div style={{ background: mode.bg, border: `2px solid ${mode.color}22`, borderRadius: 20, padding: 28, marginBottom: 20 }}>
-            <div style={{ display: "flex", gap: 24, alignItems: "flex-start", flexWrap: "wrap" }}>
+          <div style={{ background: mode.bg, border: `2px solid ${mode.color}22`, borderRadius: 20, padding: isMobile ? 18 : 28, marginBottom: 20 }}>
+            <div style={{ display: "flex", gap: 24, alignItems: "flex-start", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start" }}>
               <div style={{ flexShrink: 0, textAlign: "center" }}>
                 <FanComp color={mode.color} />
                 <div style={{ fontSize: 11, fontWeight: 700, color: mode.color, letterSpacing: 1, textTransform: "uppercase", marginTop: 6 }}>{mode.icon} {mode.label}</div>
@@ -666,7 +674,7 @@ function GafferPitch() {
           </div>
 
           {/* YEARLY SUMMARY */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14, marginBottom: 40 }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)", gap: 14, marginBottom: 40 }}>
             {[["Year 1","£121k","2k Pro users · 5 partners","#DBEAFE","#1D4ED8"],["Year 2","£600k","12k users · 25 partners · 2 brands","#D1FAE5","#065F46"],["Year 3","£3.1M","50k users · 80 partners · 10 brands","#FEF9C3","#92400E"]].map(([yr,rev,note,bg,tc]) => (
               <div key={yr} style={{ background: bg, borderRadius: 16, padding: 20, textAlign: "center" }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: tc, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>{yr}</div>
@@ -741,7 +749,7 @@ function GafferPitch() {
           </div>
 
           {/* COSTS */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 40 }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, marginBottom: 40 }}>
             <div style={{ background: "white", border: "1.5px solid #E5E7EB", borderRadius: 14, padding: 20 }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: "#9CA3AF", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 14 }}>One-time build cost</div>
               {[["MVP development (6 months)","£18–30k"],["UI/UX design","£3–5k"],["Football data API","£2–5k/yr"],["App store registration","£100"]].map(([l, v]) => (
