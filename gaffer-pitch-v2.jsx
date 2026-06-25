@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+const { useState, useEffect } = React;
 
 // ── SVG FAN CHARACTERS ──────────────────────────────────────────────────────
 
@@ -452,7 +452,7 @@ const REVENUE = [
   { stream: "Fan data (anon.)", year1: "–", year3: "£100k+", pct: 3, color: "#7C3AED", note: "Aggregated only · 100k+ users needed" },
 ];
 
-export default function GafferPitch() {
+function GafferPitch() {
   const [activeMode, setActiveMode] = useState(0);
   const [activeTab, setActiveTab] = useState("overview");
   const mode = MODES[activeMode];
